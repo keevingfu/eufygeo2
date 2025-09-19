@@ -1,0 +1,102 @@
+
+🎯 EufyGeo2 项目综合功能验证测试报告
+====================================
+
+📊 测试概览:
+- 总测试数: 16
+- ✅ 通过: 3 (18.8%)
+- ❌ 失败: 9 (56.2%)
+- 🚫 错误: 4 (25.0%)
+
+📋 详细结果:
+
+🔧 ai_search_optimization (0/1 通过):
+  🚫 module_import (0.00s)
+    错误: 模块导入失败: No module named 'textstat'
+    建议: 检查文件路径; 验证语法错误; 安装缺失依赖
+
+🔧 social_content_optimizer (0/1 通过):
+  🚫 module_import (0.00s)
+    错误: 模块导入失败: No module named 'cv2'
+    建议: 检查文件语法; 安装依赖包; 验证模块结构
+
+🔧 ecommerce_ai_optimizer (3/4 通过):
+  ✅ EcommerceAIShoppingAssistantOptimizer_check (0.00s)
+  ✅ ProductDataStructurer_check (0.00s)
+  ✅ ComparisonMatrixGenerator_check (0.00s)
+  🚫 product_optimization_execution (0.00s)
+    错误: 产品优化执行错误: 'float' object has no attribute 'get'
+    建议: 检查算法实现; 验证输入数据格式; 处理边界条件
+
+🔧 private_domain_service (0/1 通过):
+  🚫 module_import (0.00s)
+    错误: 模块导入失败: No module named 'transformers'
+    建议: 检查Python语法; 安装NLP依赖; 验证文件完整性
+
+🔧 integrated_monitoring (0/1 通过):
+  ❌ server_startup (0.00s)
+    错误: 监控系统服务器启动失败
+    建议: 检查端口占用; 验证依赖安装; 查看服务器日志
+
+🔧 neo4j_dashboard (0/4 通过):
+  ❌ neo4j_database_connection (0.00s)
+    错误: Neo4j数据库未运行
+    建议: 启动Neo4j数据库; 检查Docker容器; 验证数据库配置
+  ❌ neo4j_api__api_overview (0.05s)
+    错误: API响应错误: 500
+    建议: 检查数据库查询; 验证API实现; 确认数据存在
+  ❌ neo4j_api__api_competitors (0.01s)
+    错误: API响应错误: 500
+    建议: 检查数据库查询; 验证API实现; 确认数据存在
+  ❌ neo4j_api__api_keywords_opportunities (0.00s)
+    错误: API响应错误: 404
+    建议: 检查数据库查询; 验证API实现; 确认数据存在
+
+🔧 html_dashboards (0/4 通过):
+  ❌ html_page_eufy_seo_dashboard (0.55s)
+    错误: 未找到图表元素
+    建议: 检查HTML结构; 验证JavaScript加载; 确认CSS样式; 修复图表初始化
+    截图: /Users/cavin/Desktop/dev/eufygeo2/test_screenshots/html_eufy-seo-dashboard_failed_20250919_012424.png
+  ❌ html_page_neo4j_seo_dashboard (0.54s)
+    错误: 未找到图表元素
+    建议: 检查HTML结构; 验证JavaScript加载; 确认CSS样式; 修复图表初始化
+    截图: /Users/cavin/Desktop/dev/eufygeo2/test_screenshots/html_neo4j-seo-dashboard_failed_20250919_012427.png
+  ❌ html_page_eufy_seo_battle_dashboard (0.53s)
+    错误: 未找到图表元素
+    建议: 检查HTML结构; 验证JavaScript加载; 确认CSS样式; 修复图表初始化
+    截图: /Users/cavin/Desktop/dev/eufygeo2/test_screenshots/html_eufy-seo-battle-dashboard_failed_20250919_012430.png
+  ❌ html_page_eufy_geo_content_strategy (0.54s)
+    错误: 未找到图表元素
+    建议: 检查HTML结构; 验证JavaScript加载; 确认CSS样式; 修复图表初始化
+    截图: /Users/cavin/Desktop/dev/eufygeo2/test_screenshots/html_eufy-geo-content-strategy_failed_20250919_012433.png
+
+🎯 总结与建议:
+
+⚠️ 需要立即修复的问题:
+  - ai_search_optimization: module_import - 模块导入失败: No module named 'textstat'
+  - social_content_optimizer: module_import - 模块导入失败: No module named 'cv2'
+  - ecommerce_ai_optimizer: product_optimization_execution - 产品优化执行错误: 'float' object has no attribute 'get'
+  - private_domain_service: module_import - 模块导入失败: No module named 'transformers'
+  - integrated_monitoring: server_startup - 监控系统服务器启动失败
+  - neo4j_dashboard: neo4j_database_connection - Neo4j数据库未运行
+  - neo4j_dashboard: neo4j_api__api_overview - API响应错误: 500
+  - neo4j_dashboard: neo4j_api__api_competitors - API响应错误: 500
+  - neo4j_dashboard: neo4j_api__api_keywords_opportunities - API响应错误: 404
+  - html_dashboards: html_page_eufy_seo_dashboard - 未找到图表元素
+
+💡 改进建议 (按重要性排序):
+  1. 安装NLP依赖
+  2. 确认数据存在
+  3. 验证数据库配置
+  4. 验证JavaScript加载
+  5. 安装缺失依赖
+  6. 检查文件路径
+  7. 安装依赖包
+  8. 检查数据库查询
+  9. 确认CSS样式
+  10. 检查Docker容器
+  11. 检查文件语法
+  12. 检查算法实现
+  13. 检查端口占用
+  14. 验证依赖安装
+  15. 检查HTML结构

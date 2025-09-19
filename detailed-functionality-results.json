@@ -1,0 +1,64 @@
+{
+  "timestamp": "2025-09-17T20:47:33.081169",
+  "interactive_tests": [
+    {
+      "component": "Portal Navigation",
+      "status": "PASS",
+      "details": "Found 0 navigation elements"
+    }
+  ],
+  "data_validation": [
+    {
+      "dashboard": "Battle Dashboard",
+      "competitor_mentions": 0,
+      "battle_elements": 0
+    },
+    {
+      "dashboard": "GEO Content Strategy",
+      "geo_elements": 0,
+      "content_tools": 0
+    },
+    {
+      "page": "Brand Comparison",
+      "schema_markup": 2,
+      "comparison_tables": 2,
+      "brand_mentions": {
+        "eufy": 60,
+        "arlo": 49,
+        "ring": 78
+      }
+    },
+    {
+      "dashboard": "Neo4j Graph Dashboard",
+      "graph_elements": 0,
+      "query_elements": 0
+    },
+    {
+      "component": "Server - neo4j_dashboard_server.py",
+      "has_flask": true,
+      "has_api_routes": true,
+      "file_size": 63097
+    },
+    {
+      "component": "Server - eufy-seo-dashboard-server.py",
+      "has_flask": true,
+      "has_api_routes": true,
+      "file_size": 28947
+    },
+    {
+      "component": "Server - content_optimization_engine.py",
+      "has_flask": false,
+      "has_api_routes": true,
+      "file_size": 23705
+    }
+  ],
+  "ui_components": [
+    {
+      "dashboard": "SEO Dashboard",
+      "charts": 25,
+      "buttons": 0,
+      "dropdowns": 0,
+      "echarts": "5.4.3"
+    }
+  ]
+}

@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eufy Reddit Content Strategy Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0f1419;
+            color: #e1e8ed;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            display: flex;
+            background: #1a1f29;
+            border-radius: 12px 12px 0 0;
+            overflow: hidden;
+            margin-bottom: -1px;
+            border: 1px solid #2f3640;
+            border-bottom: none;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            color: #8899a6;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 69, 0, 0.1);
+            color: #e1e8ed;
+        }
+
+        .tab-button.active {
+            background: #ff4500;
+            color: white;
+        }
+
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #ff4500;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, #ff4500 0%, #ff6832 100%);
+            border-radius: 16px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: #1a1f29;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #2f3640;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff4500;
+            box-shadow: 0 10px 30px rgba(255, 69, 0, 0.2);
+        }
+
+        .metric-card h3 {
+            color: #8899a6;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ff4500;
+            margin: 10px 0;
+        }
+
+        .metric-description {
+            color: #657786;
+            font-size: 0.95em;
+        }
+
+        .chart-section {
+            background: #1a1f29;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #2f3640;
+        }
+
+        .chart-section h2 {
+            color: #e1e8ed;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .chart-container {
+            height: 500px;
+            margin: 20px 0;
+        }
+
+        .strategy-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .quadrant {
+            background: #1a1f29;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid;
+            transition: all 0.3s ease;
+        }
+
+        .quadrant:hover {
+            transform: scale(1.02);
+        }
+
+        .quadrant.priority-focus {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .quadrant.engagement-build {
+            border-color: #FFC107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .quadrant.citation-opp {
+            border-color: #9E9E9E;
+            background: rgba(158, 158, 158, 0.1);
+        }
+
+        .quadrant.low-priority {
+            border-color: #795548;
+            background: rgba(121, 85, 72, 0.1);
+        }
+
+        .quadrant h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quadrant-icon {
+            font-size: 1.5em;
+        }
+
+        .content-type-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .content-type-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #2f3640;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .engagement-badge {
+            background: #ff4500;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .subreddit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .subreddit-card {
+            background: #15202b;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #38444d;
+            transition: all 0.3s ease;
+        }
+
+        .subreddit-card:hover {
+            border-color: #ff4500;
+            transform: translateY(-3px);
+        }
+
+        .subreddit-name {
+            color: #ff4500;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .subreddit-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #38444d;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #e1e8ed;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #657786;
+        }
+
+        .heatmap-section {
+            background: #1a1f29;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #2f3640;
+        }
+
+        .timeline-section {
+            background: #1a1f29;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #2f3640;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: #ff4500;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: #ff6832;
+            transform: translateY(-2px);
+        }
+
+        .priority-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .priority-high { background: #4CAF50; }
+        .priority-medium { background: #FFC107; }
+        .priority-low { background: #9E9E9E; }
+
+        @media (max-width: 768px) {
+            .strategy-matrix {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Eufy Reddit Content Strategy Dashboard</h1>
+            <p>Data-Driven Community Engagement & Content Optimization</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="showTab('strategy-matrix')">Strategy Matrix</button>
+            <button class="tab-button" onclick="showTab('ai-optimization')">AI Citation Optimization</button>
+            <button class="tab-button" onclick="showTab('content-analytics')">Content Analytics</button>
+        </div>
+
+        <!-- Tab Content 1: Strategy Matrix -->
+        <div id="strategy-matrix" class="tab-content active">
+
+        <!-- Key Metrics -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>Total Content Types</h3>
+                <div class="metric-value">12</div>
+                <div class="metric-description">Across 4 strategic quadrants</div>
+            </div>
+            <div class="metric-card">
+                <h3>Priority Focus Areas</h3>
+                <div class="metric-value">4</div>
+                <div class="metric-description">High engagement + High citation</div>
+            </div>
+            <div class="metric-card">
+                <h3>Target Subreddits</h3>
+                <div class="metric-value">15</div>
+                <div class="metric-description">Active community targets</div>
+            </div>
+            <div class="metric-card">
+                <h3>Avg Citation Rate</h3>
+                <div class="metric-value">7.5/10</div>
+                <div class="metric-description">Potential AI citation score</div>
+            </div>
+        </div>
+
+        <!-- Strategy Matrix Chart -->
+        <div class="chart-section">
+            <h2>Reddit Content Strategy Matrix</h2>
+            <div id="strategyMatrix" class="chart-container"></div>
+        </div>
+
+        <!-- Quadrant Analysis -->
+        <div class="strategy-matrix">
+            <div class="quadrant priority-focus">
+                <h3><span class="quadrant-icon">🎯</span> Priority Focus</h3>
+                <p style="color: #8899a6; margin-bottom: 15px;">High Engagement + High Citation Potential</p>
+                <ul class="content-type-list">
+                    <li>
+                        Product Comparisons
+                        <span class="engagement-badge">9.5</span>
+                    </li>
+                    <li>
+                        Battery Life Tests
+                        <span class="engagement-badge">9.0</span>
+                    </li>
+                    <li>
+                        Tech Support Solutions
+                        <span class="engagement-badge">8.0</span>
+                    </li>
+                    <li>
+                        Smart Home Integration
+                        <span class="engagement-badge">8.0</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="quadrant engagement-build">
+                <h3><span class="quadrant-icon">🔨</span> Engagement Build</h3>
+                <p style="color: #8899a6; margin-bottom: 15px;">High Engagement + Lower Citation</p>
+                <ul class="content-type-list">
+                    <li>
+                        Setup Guides
+                        <span class="engagement-badge">7.0</span>
+                    </li>
+                    <li>
+                        Feature Reviews
+                        <span class="engagement-badge">7.0</span>
+                    </li>
+                    <li>
+                        Value/Price Analysis
+                        <span class="engagement-badge">7.5</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="quadrant citation-opp">
+                <h3><span class="quadrant-icon">📈</span> Citation Opportunity</h3>
+                <p style="color: #8899a6; margin-bottom: 15px;">Lower Engagement + High Citation</p>
+                <ul class="content-type-list">
+                    <li>
+                        Privacy & Security Guides
+                        <span class="engagement-badge">5.0</span>
+                    </li>
+                    <li>
+                        App Troubleshooting
+                        <span class="engagement-badge">5.0</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="quadrant low-priority">
+                <h3><span class="quadrant-icon">📊</span> Low Priority</h3>
+                <p style="color: #8899a6; margin-bottom: 15px;">Lower Engagement + Lower Citation</p>
+                <ul class="content-type-list">
+                    <li>
+                        Accessories Reviews
+                        <span class="engagement-badge">3.0</span>
+                    </li>
+                    <li>
+                        Hardware Performance
+                        <span class="engagement-badge">4.0</span>
+                    </li>
+                    <li>
+                        Customer Support Stories
+                        <span class="engagement-badge">4.0</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Subreddit Performance -->
+        <div class="chart-section">
+            <h2>Top Performing Subreddits</h2>
+            <div class="subreddit-grid">
+                <div class="subreddit-card">
+                    <div class="subreddit-name">r/homesecurity</div>
+                    <p style="color: #8899a6;">Technical discussions, setup guides, troubleshooting</p>
+                    <div class="subreddit-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">450K</div>
+                            <div class="stat-label">Members</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">8.5</div>
+                            <div class="stat-label">Engagement</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">9/10</div>
+                            <div class="stat-label">Citation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subreddit-card">
+                    <div class="subreddit-name">r/homeautomation</div>
+                    <p style="color: #8899a6;">Smart home integration, automation tips</p>
+                    <div class="subreddit-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">2.1M</div>
+                            <div class="stat-label">Members</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">7.8</div>
+                            <div class="stat-label">Engagement</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">8/10</div>
+                            <div class="stat-label">Citation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subreddit-card">
+                    <div class="subreddit-name">r/smarthome</div>
+                    <p style="color: #8899a6;">Product comparisons, buying guides</p>
+                    <div class="subreddit-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">650K</div>
+                            <div class="stat-label">Members</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">8.2</div>
+                            <div class="stat-label">Engagement</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">8/10</div>
+                            <div class="stat-label">Citation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subreddit-card">
+                    <div class="subreddit-name">r/HomeImprovement</div>
+                    <p style="color: #8899a6;">DIY installation, security upgrades</p>
+                    <div class="subreddit-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">3.5M</div>
+                            <div class="stat-label">Members</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">6.5</div>
+                            <div class="stat-label">Engagement</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">7/10</div>
+                            <div class="stat-label">Citation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Type Performance Heatmap -->
+        <div class="heatmap-section">
+            <h2>Content Performance Heatmap</h2>
+            <div id="performanceHeatmap" class="chart-container"></div>
+        </div>
+
+        <!-- Engagement Timeline -->
+        <div class="timeline-section">
+            <h2>Weekly Engagement Optimization Schedule</h2>
+            <div id="engagementTimeline" class="chart-container" style="height: 300px;"></div>
+            
+            <div class="action-buttons">
+                <button class="action-btn" onclick="exportStrategy()">Export Strategy</button>
+                <button class="action-btn" onclick="generateReport()">Generate Report</button>
+                <button class="action-btn" onclick="scheduleContent()">Schedule Content</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+        <!-- Tab Content 2: AI Citation Optimization -->
+        <div id="ai-optimization" class="tab-content">
+            <!-- AI Overview Charts -->
+            <div class="chart-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #1a1f29; padding: 20px; border-radius: 12px; border: 1px solid #2f3640;">
+                    <h3 style="margin-bottom: 20px;">AI Overview Citation Status</h3>
+                    <div id="aiOverviewChart" style="height: 350px;"></div>
+                </div>
+                <div style="background: #1a1f29; padding: 20px; border-radius: 12px; border: 1px solid #2f3640;">
+                    <h3 style="margin-bottom: 20px;">Content Creation Priority Matrix</h3>
+                    <div id="contentPriorityChart" style="height: 350px;"></div>
+                </div>
+            </div>
+
+            <!-- Subreddit Activity Analysis -->
+            <div class="chart-section" style="margin-top: 20px;">
+                <h2>Subreddit Activity Analysis</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div id="subredditActivityChart" style="height: 400px;"></div>
+                    <div id="executionTimelineChart" style="height: 400px;"></div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="metrics-grid" style="margin-top: 30px;">
+                <div class="metric-card">
+                    <h3>AI Citation Growth</h3>
+                    <div class="metric-value" style="color: #4CAF50;">+185%</div>
+                    <div class="metric-description">Monthly average increase</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Content Velocity</h3>
+                    <div class="metric-value" style="color: #2196F3;">2.5K</div>
+                    <div class="metric-description">Posts per month</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Engagement Rate</h3>
+                    <div class="metric-value" style="color: #FF9800;">8.7/10</div>
+                    <div class="metric-description">Average across subreddits</div>
+                </div>
+                <div class="metric-card">
+                    <h3>ROI Timeline</h3>
+                    <div class="metric-value" style="color: #9C27B0;">3-6M</div>
+                    <div class="metric-description">Expected payback period</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content 3: Content Analytics -->
+        <div id="content-analytics" class="tab-content">
+            <!-- Top Row Charts -->
+            <div class="chart-section" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #1a1f29; padding: 20px; border-radius: 12px; border: 1px solid #2f3640;">
+                    <h3 style="margin-bottom: 20px;">AI Citation Distribution</h3>
+                    <div id="citationDistributionChart" style="height: 350px;"></div>
+                </div>
+                <div style="background: #1a1f29; padding: 20px; border-radius: 12px; border: 1px solid #2f3640;">
+                    <h3 style="margin-bottom: 20px;">Content Direction Priority</h3>
+                    <div id="contentDirectionChart" style="height: 350px;"></div>
+                </div>
+            </div>
+
+            <!-- Bottom Row Charts -->
+            <div class="chart-section" style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #1a1f29; padding: 20px; border-radius: 12px; border: 1px solid #2f3640;">
+                    <h3 style="margin-bottom: 20px;">Subreddit Target Analysis</h3>
+                    <div id="subredditTargetChart" style="height: 350px;"></div>
+                </div>
+                <div style="background: #1a1f29; padding: 20px; border-radius: 12px; border: 1px solid #2f3640;">
+                    <h3 style="margin-bottom: 20px;">Citation Growth Timeline</h3>
+                    <div id="citationTimelineChart" style="height: 350px;"></div>
+                </div>
+            </div>
+
+            <!-- Content Strategy Summary -->
+            <div class="metrics-grid" style="margin-top: 30px;">
+                <div class="metric-card">
+                    <h3>High Citation Content</h3>
+                    <div class="metric-value" style="color: #00BCD4;">50%</div>
+                    <div class="metric-description">Troubleshooting guides</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Medium Citation Content</h3>
+                    <div class="metric-value" style="color: #4CAF50;">30%</div>
+                    <div class="metric-description">How-to tutorials</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Low Citation Content</h3>
+                    <div class="metric-value" style="color: #FF5252;">20%</div>
+                    <div class="metric-description">General discussions</div>
+                </div>
+                <div class="metric-card">
+                    <h3>Peak Performance</h3>
+                    <div class="metric-value" style="color: #FFC107;">70%</div>
+                    <div class="metric-description">Month 5-6 target</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Initialize charts when switching tabs
+            if (tabName === 'ai-optimization') {
+                setTimeout(() => {
+                    initializeAICharts();
+                }, 100);
+            } else if (tabName === 'content-analytics') {
+                setTimeout(() => {
+                    initializeContentAnalytics();
+                }, 100);
+            }
+        }
+
+        // Initialize charts
+        const strategyMatrixChart = echarts.init(document.getElementById('strategyMatrix'));
+        const heatmapChart = echarts.init(document.getElementById('performanceHeatmap'));
+        const timelineChart = echarts.init(document.getElementById('engagementTimeline'));
+
+        // Strategy Matrix Data
+        const matrixData = [
+            // Priority Focus (High Engagement, High Citation)
+            { name: 'Product Comp', value: [9.5, 9.5], category: 0 },
+            { name: 'Battery Life', value: [9, 9], category: 0 },
+            { name: 'Tech Support', value: [9, 8], category: 0 },
+            { name: 'Smart Home', value: [7.5, 8], category: 0 },
+            
+            // Engagement Build (High Engagement, Lower Citation)
+            { name: 'Setup Guides', value: [7, 5], category: 1 },
+            { name: 'Feature Rev', value: [6.5, 7], category: 1 },
+            { name: 'Value Price', value: [7.5, 7.5], category: 1 },
+            
+            // Citation Opportunity (Lower Engagement, High Citation)
+            { name: 'Privacy Sec', value: [5, 5], category: 2 },
+            { name: 'App Issues', value: [6, 5], category: 2 },
+            
+            // Low Priority (Lower Engagement, Lower Citation)
+            { name: 'Accessories', value: [3, 2], category: 3 },
+            { name: 'Hardware Perf', value: [4, 3], category: 3 },
+            { name: 'Customer Sup', value: [4, 2], category: 3 }
+        ];
+
+        // Strategy Matrix Chart Options
+        const strategyMatrixOption = {
+            title: {
+                text: 'Content Type Distribution by Engagement and Citation Potential',
+                left: 'center',
+                textStyle: {
+                    color: '#e1e8ed',
+                    fontSize: 18
+                }
+            },
+            grid: {
+                left: '10%',
+                right: '10%',
+                bottom: '15%',
+                top: '15%',
+                containLabel: true
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                borderColor: '#ff4500',
+                textStyle: {
+                    color: '#fff'
+                },
+                formatter: function(params) {
+                    return `<strong>${params.name}</strong><br/>
+                            User Engagement: ${params.value[0]}<br/>
+                            Citation Rate: ${params.value[1]}`;
+                }
+            },
+            xAxis: {
+                type: 'value',
+                name: 'User Engagement',
+                nameLocation: 'center',
+                nameGap: 30,
+                nameTextStyle: {
+                    color: '#e1e8ed',
+                    fontSize: 14
+                },
+                max: 10,
+                min: 0,
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#2f3640',
+                        type: 'dashed'
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#657786'
+                    }
+                },
+                axisLabel: {
+                    color: '#8899a6'
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Citation Rate',
+                nameLocation: 'center',
+                nameGap: 30,
+                nameTextStyle: {
+                    color: '#e1e8ed',
+                    fontSize: 14
+                },
+                max: 10,
+                min: 0,
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: '#2f3640',
+                        type: 'dashed'
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#657786'
+                    }
+                },
+                axisLabel: {
+                    color: '#8899a6'
+                }
+            },
+            visualMap: {
+                show: false,
+                dimension: 2,
+                categories: [0, 1, 2, 3],
+                inRange: {
+                    color: ['#4CAF50', '#FFC107', '#9E9E9E', '#795548']
+                }
+            },
+            series: [{
+                type: 'scatter',
+                symbolSize: function(val) {
+                    return 15 + val[0] * 3;
+                },
+                data: matrixData,
+                label: {
+                    show: true,
+                    formatter: '{b}',
+                    position: 'top',
+                    color: '#e1e8ed',
+                    fontSize: 12
+                },
+                itemStyle: {
+                    shadowBlur: 10,
+                    shadowColor: 'rgba(255, 69, 0, 0.5)',
+                    shadowOffsetY: 5
+                },
+                animationDelay: function(idx) {
+                    return idx * 50;
+                }
+            }],
+            // Add quadrant backgrounds
+            graphic: [
+                {
+                    type: 'rect',
+                    shape: { x: 0, y: 0, width: 1, height: 1 },
+                    style: { fill: 'rgba(121, 85, 72, 0.1)' },
+                    silent: true,
+                    z: -1,
+                    left: '10%',
+                    top: '55%',
+                    right: '50%',
+                    bottom: '15%'
+                },
+                {
+                    type: 'rect',
+                    shape: { x: 0, y: 0, width: 1, height: 1 },
+                    style: { fill: 'rgba(158, 158, 158, 0.1)' },
+                    silent: true,
+                    z: -1,
+                    left: '10%',
+                    top: '15%',
+                    right: '50%',
+                    bottom: '55%'
+                },
+                {
+                    type: 'rect',
+                    shape: { x: 0, y: 0, width: 1, height: 1 },
+                    style: { fill: 'rgba(255, 193, 7, 0.1)' },
+                    silent: true,
+                    z: -1,
+                    left: '50%',
+                    top: '55%',
+                    right: '10%',
+                    bottom: '15%'
+                },
+                {
+                    type: 'rect',
+                    shape: { x: 0, y: 0, width: 1, height: 1 },
+                    style: { fill: 'rgba(76, 175, 80, 0.1)' },
+                    silent: true,
+                    z: -1,
+                    left: '50%',
+                    top: '15%',
+                    right: '10%',
+                    bottom: '55%'
+                },
+                // Quadrant labels
+                {
+                    type: 'text',
+                    style: {
+                        text: 'Low Priority',
+                        x: 100,
+                        y: 350,
+                        fill: '#795548',
+                        font: 'bold 14px sans-serif'
+                    }
+                },
+                {
+                    type: 'text',
+                    style: {
+                        text: 'Citation Opp',
+                        x: 100,
+                        y: 100,
+                        fill: '#9E9E9E',
+                        font: 'bold 14px sans-serif'
+                    }
+                },
+                {
+                    type: 'text',
+                    style: {
+                        text: 'Engagement Build',
+                        x: 500,
+                        y: 350,
+                        fill: '#FFC107',
+                        font: 'bold 14px sans-serif'
+                    }
+                },
+                {
+                    type: 'text',
+                    style: {
+                        text: 'Priority Focus',
+                        x: 500,
+                        y: 100,
+                        fill: '#4CAF50',
+                        font: 'bold 14px sans-serif'
+                    }
+                }
+            ]
+        };
+
+        // Heatmap Data
+        const hours = ['12am', '2am', '4am', '6am', '8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm', '10pm'];
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const heatmapData = [];
+
+        // Generate heatmap data
+        for (let i = 0; i < days.length; i++) {
+            for (let j = 0; j < hours.length; j++) {
+                let value = Math.random() * 100;
+                // Peak times
+                if ((j >= 8 && j <= 10) || (j >= 16 && j <= 20)) {
+                    value = 70 + Math.random() * 30;
+                }
+                // Weekends
+                if (i >= 5) {
+                    value = value * 1.2;
+                }
+                heatmapData.push([j, i, Math.floor(value)]);
+            }
+        }
+
+        // Heatmap Options
+        const heatmapOption = {
+            title: {
+                text: 'Optimal Posting Times by Day and Hour',
+                left: 'center',
+                textStyle: {
+                    color: '#e1e8ed',
+                    fontSize: 16
+                }
+            },
+            tooltip: {
+                position: 'top',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                borderColor: '#ff4500',
+                textStyle: {
+                    color: '#fff'
+                },
+                formatter: function(params) {
+                    return `${days[params.value[1]]} ${hours[params.value[0]]}<br/>
+                            Engagement Score: ${params.value[2]}`;
+                }
+            },
+            grid: {
+                height: '70%',
+                top: '15%',
+                left: '15%',
+                right: '5%'
+            },
+            xAxis: {
+                type: 'category',
+                data: hours,
+                splitArea: {
+                    show: true,
+                    areaStyle: {
+                        color: ['#15202b', '#1a1f29']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#657786'
+                    }
+                },
+                axisLabel: {
+                    color: '#8899a6'
+                }
+            },
+            yAxis: {
+                type: 'category',
+                data: days,
+                splitArea: {
+                    show: true,
+                    areaStyle: {
+                        color: ['#15202b', '#1a1f29']
+                    }
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#657786'
+                    }
+                },
+                axisLabel: {
+                    color: '#8899a6'
+                }
+            },
+            visualMap: {
+                min: 0,
+                max: 100,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                bottom: '5%',
+                inRange: {
+                    color: ['#15202b', '#ff4500', '#ff6832']
+                },
+                textStyle: {
+                    color: '#8899a6'
+                }
+            },
+            series: [{
+                name: 'Engagement Score',
+                type: 'heatmap',
+                data: heatmapData,
+                label: {
+                    show: false
+                },
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowColor: 'rgba(255, 69, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+
+        // Timeline Options
+        const timelineOption = {
+            tooltip: {
+                trigger: 'axis',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                borderColor: '#ff4500',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                axisLine: {
+                    lineStyle: {
+                        color: '#657786'
+                    }
+                },
+                axisLabel: {
+                    color: '#8899a6'
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: 'Content Volume',
+                nameTextStyle: {
+                    color: '#e1e8ed'
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#657786'
+                    }
+                },
+                axisLabel: {
+                    color: '#8899a6'
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#2f3640',
+                        type: 'dashed'
+                    }
+                }
+            },
+            series: [
+                {
+                    name: 'Priority Focus',
+                    type: 'line',
+                    data: [3, 4, 5, 4, 6, 8, 7],
+                    smooth: true,
+                    itemStyle: {
+                        color: '#4CAF50'
+                    },
+                    areaStyle: {
+                        opacity: 0.3
+                    }
+                },
+                {
+                    name: 'Engagement Build',
+                    type: 'line',
+                    data: [2, 3, 3, 4, 5, 6, 5],
+                    smooth: true,
+                    itemStyle: {
+                        color: '#FFC107'
+                    },
+                    areaStyle: {
+                        opacity: 0.3
+                    }
+                },
+                {
+                    name: 'Citation Opp',
+                    type: 'line',
+                    data: [1, 1, 2, 2, 3, 2, 2],
+                    smooth: true,
+                    itemStyle: {
+                        color: '#9E9E9E'
+                    },
+                    areaStyle: {
+                        opacity: 0.3
+                    }
+                }
+            ],
+            legend: {
+                data: ['Priority Focus', 'Engagement Build', 'Citation Opp'],
+                textStyle: {
+                    color: '#8899a6'
+                }
+            }
+        };
+
+        // Set chart options
+        strategyMatrixChart.setOption(strategyMatrixOption);
+        heatmapChart.setOption(heatmapOption);
+        timelineChart.setOption(timelineOption);
+
+        // Responsive
+        window.addEventListener('resize', function() {
+            strategyMatrixChart.resize();
+            heatmapChart.resize();
+            timelineChart.resize();
+        });
+
+        // Initialize AI Optimization Charts
+        function initializeAICharts() {
+            // AI Overview Chart
+            const aiOverviewChart = echarts.init(document.getElementById('aiOverviewChart'));
+            const aiOverviewOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        return `${params.name}<br/>
+                                Citations: ${params.value}<br/>
+                                Quality Score: ${params.data.quality}`;
+                    }
+                },
+                series: [{
+                    type: 'scatter',
+                    symbolSize: function(data) {
+                        return data[1] * 15;
+                    },
+                    data: [
+                        {
+                            name: 'EufyCam',
+                            value: [5, 7],
+                            quality: 8.0,
+                            itemStyle: { color: '#FF6B6B' }
+                        },
+                        {
+                            name: 'RobotVacuums',
+                            value: [4, 8],
+                            quality: 7.5,
+                            itemStyle: { color: '#4ECDC4' }
+                        },
+                        {
+                            name: 'SmartHome',
+                            value: [5, 7],
+                            quality: 7.0,
+                            itemStyle: { color: '#45B7D1' }
+                        },
+                        {
+                            name: 'Pets',
+                            value: [6, 8],
+                            quality: 8.5,
+                            itemStyle: { color: '#F9DC5C' }
+                        },
+                        {
+                            name: 'Privacy',
+                            value: [6, 3],
+                            quality: 6.0,
+                            itemStyle: { color: '#96CEB4' }
+                        },
+                        {
+                            name: 'ElderCare',
+                            value: [7, 6],
+                            quality: 7.5,
+                            itemStyle: { color: '#DDA15E' }
+                        }
+                    ],
+                    label: {
+                        show: true,
+                        formatter: '{b}',
+                        position: 'top'
+                    }
+                }],
+                xAxis: {
+                    name: 'Content Quality',
+                    nameLocation: 'center',
+                    nameGap: 30,
+                    splitLine: { show: false },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                },
+                yAxis: {
+                    name: 'AI Citation Rate',
+                    nameLocation: 'center',
+                    nameGap: 30,
+                    splitLine: { show: false },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                }
+            };
+            aiOverviewChart.setOption(aiOverviewOption);
+
+            // Content Priority Chart
+            const contentPriorityChart = echarts.init(document.getElementById('contentPriorityChart'));
+            const contentPriorityOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        return `${params.name}<br/>
+                                AI Potential: ${params.value[0]}<br/>
+                                Citation Rate: ${params.value[1]}`;
+                    }
+                },
+                series: [{
+                    type: 'scatter',
+                    symbolSize: function(data) {
+                        return 10 + data[1] * 5;
+                    },
+                    data: [
+                        {
+                            name: 'Product Reviews',
+                            value: [9, 9],
+                            itemStyle: { color: '#4CAF50' }
+                        },
+                        {
+                            name: 'Tech Support',
+                            value: [9, 8],
+                            itemStyle: { color: '#2196F3' }
+                        },
+                        {
+                            name: 'Setup Guides',
+                            value: [8, 7],
+                            itemStyle: { color: '#FF9800' }
+                        },
+                        {
+                            name: 'Troubleshooting',
+                            value: [7.5, 6],
+                            itemStyle: { color: '#9C27B0' }
+                        }
+                    ],
+                    label: {
+                        show: true,
+                        formatter: '{b}',
+                        position: 'top'
+                    }
+                }],
+                xAxis: {
+                    name: 'AI Citation Potential',
+                    nameLocation: 'center',
+                    nameGap: 30,
+                    max: 10,
+                    splitLine: { show: false },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                },
+                yAxis: {
+                    name: 'Citation Success Rate',
+                    nameLocation: 'center',
+                    nameGap: 30,
+                    max: 10,
+                    splitLine: { show: false },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                }
+            };
+            contentPriorityChart.setOption(contentPriorityOption);
+
+            // Subreddit Activity Chart
+            const subredditActivityChart = echarts.init(document.getElementById('subredditActivityChart'));
+            const subredditActivityOption = {
+                title: {
+                    text: 'Subreddit Activity Analysis',
+                    left: 'center',
+                    textStyle: { color: '#e1e8ed' }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' }
+                },
+                legend: {
+                    data: ['Posts', 'Citation Rate'],
+                    bottom: 0,
+                    textStyle: { color: '#8899a6' }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['RobotVacuums', 'SmartHome', 'EufyCam', 'Pets', 'Privacy', 'ElderCare'],
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { 
+                        color: '#8899a6',
+                        rotate: 45
+                    }
+                },
+                yAxis: [
+                    {
+                        type: 'value',
+                        name: 'Posts',
+                        nameTextStyle: { color: '#e1e8ed' },
+                        axisLine: { lineStyle: { color: '#657786' } },
+                        axisLabel: { color: '#8899a6' },
+                        splitLine: { lineStyle: { color: '#2f3640', type: 'dashed' } }
+                    },
+                    {
+                        type: 'value',
+                        name: 'Citation Rate',
+                        nameTextStyle: { color: '#e1e8ed' },
+                        min: 6,
+                        max: 10,
+                        axisLine: { lineStyle: { color: '#657786' } },
+                        axisLabel: { color: '#8899a6' }
+                    }
+                ],
+                series: [
+                    {
+                        name: 'Posts',
+                        type: 'bar',
+                        data: [200, 300, 2500, 500, 800, 100],
+                        itemStyle: { color: '#00BCD4' }
+                    },
+                    {
+                        name: 'Citation Rate',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: [8.8, 8.0, 7.2, 7.0, 8.5, 10],
+                        itemStyle: { color: '#FF5252' },
+                        symbol: 'circle',
+                        symbolSize: 8
+                    }
+                ]
+            };
+            subredditActivityChart.setOption(subredditActivityOption);
+
+            // Execution Timeline Chart
+            const executionTimelineChart = echarts.init(document.getElementById('executionTimelineChart'));
+            const executionTimelineOption = {
+                title: {
+                    text: '12-Month Execution Timeline',
+                    left: 'center',
+                    textStyle: { color: '#e1e8ed' }
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['Month 1-3', 'Month 4-6', 'Month 7-9', 'Month 10-12'],
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Citation Rate (%)',
+                    nameTextStyle: { color: '#e1e8ed' },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' },
+                    splitLine: { lineStyle: { color: '#2f3640', type: 'dashed' } }
+                },
+                series: [{
+                    name: 'Citation Growth',
+                    type: 'line',
+                    data: [30, 50, 65, 90],
+                    smooth: true,
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(76, 175, 80, 0.8)' },
+                            { offset: 1, color: 'rgba(76, 175, 80, 0.1)' }
+                        ])
+                    },
+                    itemStyle: { color: '#4CAF50' },
+                    symbol: 'circle',
+                    symbolSize: 10
+                }]
+            };
+            executionTimelineChart.setOption(executionTimelineOption);
+
+            // Resize new charts
+            window.addEventListener('resize', function() {
+                aiOverviewChart.resize();
+                contentPriorityChart.resize();
+                subredditActivityChart.resize();
+                executionTimelineChart.resize();
+            });
+        }
+
+        // Initialize Content Analytics Charts
+        function initializeContentAnalytics() {
+            // Citation Distribution Pie Chart
+            const citationDistributionChart = echarts.init(document.getElementById('citationDistributionChart'));
+            const citationDistributionOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {d}%'
+                },
+                series: [{
+                    name: 'AI Citation Rate',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#1a1f29',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: true,
+                        formatter: '{b}\n{d}%',
+                        color: '#e1e8ed'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '16',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    data: [
+                        {
+                            value: 50,
+                            name: 'Troubleshooting',
+                            itemStyle: { color: '#00BCD4' }
+                        },
+                        {
+                            value: 30,
+                            name: 'How-to Guides',
+                            itemStyle: { color: '#4CAF50' }
+                        },
+                        {
+                            value: 20,
+                            name: 'General Content',
+                            itemStyle: { color: '#FF5252' }
+                        }
+                    ]
+                }]
+            };
+            citationDistributionChart.setOption(citationDistributionOption);
+
+            // Content Direction Priority Scatter Chart
+            const contentDirectionChart = echarts.init(document.getElementById('contentDirectionChart'));
+            const contentDirectionOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        return `${params.name}<br/>
+                                Citation Potential: ${params.value[0]}<br/>
+                                Engagement: ${params.value[1]}`;
+                    }
+                },
+                xAxis: {
+                    name: 'Citation Potential',
+                    nameLocation: 'center',
+                    nameGap: 30,
+                    max: 10,
+                    splitLine: { 
+                        show: true,
+                        lineStyle: {
+                            color: '#2f3640',
+                            type: 'dashed'
+                        }
+                    },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                },
+                yAxis: {
+                    name: 'Engagement Score',
+                    nameLocation: 'center',
+                    nameGap: 30,
+                    max: 7,
+                    splitLine: { 
+                        show: true,
+                        lineStyle: {
+                            color: '#2f3640',
+                            type: 'dashed'
+                        }
+                    },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                },
+                series: [{
+                    type: 'scatter',
+                    symbolSize: function(data) {
+                        return 100 + data[1] * 20;
+                    },
+                    data: [
+                        {
+                            name: 'Long-term Comparison',
+                            value: [7, 5],
+                            itemStyle: { color: '#2196F3' }
+                        },
+                        {
+                            name: 'Troubleshooting',
+                            value: [6.5, 5.5],
+                            itemStyle: { color: '#FF9800' }
+                        },
+                        {
+                            name: 'Privacy Analysis',
+                            value: [7.5, 5],
+                            itemStyle: { color: '#9C27B0' }
+                        },
+                        {
+                            name: 'Pet Protection',
+                            value: [7.8, 4],
+                            itemStyle: { color: '#4CAF50' }
+                        },
+                        {
+                            name: 'Elder Care Safety',
+                            value: [9, 3],
+                            itemStyle: { color: '#00BCD4' }
+                        },
+                        {
+                            name: 'Multi-language',
+                            value: [5.5, 2],
+                            itemStyle: { color: '#795548' }
+                        },
+                        {
+                            name: 'B2B Scenarios',
+                            value: [5, 1],
+                            itemStyle: { color: '#607D8B' }
+                        }
+                    ],
+                    label: {
+                        show: true,
+                        formatter: '{b}',
+                        position: 'top',
+                        color: '#e1e8ed',
+                        fontSize: 11
+                    }
+                }],
+                grid: {
+                    left: '10%',
+                    right: '10%',
+                    bottom: '15%',
+                    top: '10%',
+                    containLabel: true
+                }
+            };
+            contentDirectionChart.setOption(contentDirectionOption);
+
+            // Subreddit Target Bar Chart
+            const subredditTargetChart = echarts.init(document.getElementById('subredditTargetChart'));
+            const subredditTargetOption = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' }
+                },
+                grid: {
+                    left: '15%',
+                    right: '5%',
+                    bottom: '10%',
+                    top: '10%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['RVacuums', 'SHome', 'Pets', 'Privacy', 'ECare'],
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { 
+                        color: '#8899a6',
+                        rotate: 0
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Posts/Month',
+                    nameTextStyle: { color: '#e1e8ed' },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' },
+                    splitLine: { 
+                        lineStyle: { 
+                            color: '#2f3640', 
+                            type: 'dashed' 
+                        } 
+                    }
+                },
+                series: [{
+                    name: 'Target Subreddits',
+                    type: 'bar',
+                    data: [
+                        {
+                            value: 150,
+                            itemStyle: { color: '#5C6BC0' }
+                        },
+                        {
+                            value: 300,
+                            itemStyle: { color: '#42A5F5' }
+                        },
+                        {
+                            value: 800,
+                            itemStyle: { color: '#26A69A' }
+                        },
+                        {
+                            value: 80,
+                            itemStyle: { color: '#66BB6A' }
+                        },
+                        {
+                            value: 50,
+                            itemStyle: { color: '#FFA726' }
+                        }
+                    ],
+                    label: {
+                        show: true,
+                        position: 'top',
+                        color: '#e1e8ed'
+                    }
+                }]
+            };
+            subredditTargetChart.setOption(subredditTargetOption);
+
+            // Citation Growth Timeline
+            const citationTimelineChart = echarts.init(document.getElementById('citationTimelineChart'));
+            const citationTimelineOption = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                grid: {
+                    left: '10%',
+                    right: '10%',
+                    bottom: '15%',
+                    top: '10%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['Month 1-2', 'Month 3-4', 'Month 5-6'],
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'AI Citation Rate (%)',
+                    nameTextStyle: { color: '#e1e8ed' },
+                    axisLine: { lineStyle: { color: '#657786' } },
+                    axisLabel: { color: '#8899a6' },
+                    splitLine: { 
+                        lineStyle: { 
+                            color: '#2f3640', 
+                            type: 'dashed' 
+                        } 
+                    }
+                },
+                series: [{
+                    name: 'Citation Growth',
+                    type: 'line',
+                    data: [20, 40, 70],
+                    smooth: true,
+                    symbol: 'circle',
+                    symbolSize: 12,
+                    itemStyle: { 
+                        color: '#FFC107',
+                        borderWidth: 3,
+                        borderColor: '#fff'
+                    },
+                    lineStyle: {
+                        width: 3,
+                        color: '#FFC107'
+                    },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(255, 193, 7, 0.4)' },
+                            { offset: 1, color: 'rgba(255, 193, 7, 0.1)' }
+                        ])
+                    },
+                    markPoint: {
+                        data: [
+                            { type: 'max', name: 'Target' }
+                        ],
+                        label: {
+                            color: '#e1e8ed'
+                        }
+                    }
+                }]
+            };
+            citationTimelineChart.setOption(citationTimelineOption);
+
+            // Resize analytics charts
+            window.addEventListener('resize', function() {
+                citationDistributionChart.resize();
+                contentDirectionChart.resize();
+                subredditTargetChart.resize();
+                citationTimelineChart.resize();
+            });
+        }
+
+        // Interactive functions
+        function exportStrategy() {
+            alert('Exporting Reddit Content Strategy Report...');
+            // Implementation for export functionality
+        }
+
+        function generateReport() {
+            alert('Generating Comprehensive Analytics Report...');
+            // Implementation for report generation
+        }
+
+        function scheduleContent() {
+            alert('Opening Content Scheduling Interface...');
+            // Implementation for content scheduling
+        }
+
+        // Animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards
+        document.querySelectorAll('.metric-card, .quadrant, .subreddit-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

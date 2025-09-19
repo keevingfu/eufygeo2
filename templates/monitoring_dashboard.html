@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEO四大触点整合监控系统</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f7fa; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+        .dashboard { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 20px; }
+        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .metric-item { text-align: center; padding: 15px; border-radius: 8px; background: #f8f9fa; }
+        .metric-value { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
+        .metric-label { font-size: 12px; color: #6c757d; }
+        .alert { padding: 10px; border-radius: 5px; margin: 5px 0; }
+        .alert-warning { background: #fff3cd; border-left: 4px solid #ffc107; }
+        .alert-critical { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .chart-container { height: 300px; }
+        .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .status-active { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-critical { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 GEO四大触点整合监控系统</h1>
+        <p>实时监控AI搜索、社交内容、电商AI导购、私域客服</p>
+    </div>
+
+    <div class="dashboard">
+        <!-- 整体概览 -->
+        <div class="card">
+            <h3>🌟 整体GEO表现</h3>
+            <div class="chart-container" id="overallGeoChart"></div>
+        </div>
+
+        <!-- 四大触点状态 -->
+        <div class="card">
+            <h3>📊 四大触点状态</h3>
+            <div id="touchpointStatus"></div>
+        </div>
+
+        <!-- AI引用率趋势 -->
+        <div class="card">
+            <h3>🤖 AI引用率趋势</h3>
+            <div class="chart-container" id="citationRateChart"></div>
+        </div>
+
+        <!-- 系统警报 -->
+        <div class="card">
+            <h3>🚨 系统警报</h3>
+            <div id="systemAlerts"></div>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket连接
+        const socket = io();
+        
+        // 图表实例
+        let overallGeoChart = echarts.init(document.getElementById('overallGeoChart'));
+        let citationRateChart = echarts.init(document.getElementById('citationRateChart'));
+        
+        // 监听数据更新
+        socket.on('dashboard_update', function(data) {
+            updateDashboard(data);
+        });
+        
+        function updateDashboard(data) {
+            updateOverallGeoChart(data.overall_geo_score);
+            updateTouchpointStatus(data.touchpoints);
+            updateCitationRateChart(data.touchpoints);
+            updateSystemAlerts(data.touchpoints);
+        }
+        
+        function updateOverallGeoChart(score) {
+            const option = {
+                series: [{
+                    type: 'gauge',
+                    axisLine: {
+                        lineStyle: {
+                            width: 30,
+                            color: [
+                                [0.3, '#fd666d'],
+                                [0.7, '#ffc107'],
+                                [1, '#28a745']
+                            ]
+                        }
+                    },
+                    pointer: { itemStyle: { color: 'auto' } },
+                    axisTick: { distance: -30, length: 8, lineStyle: { color: '#fff', width: 2 } },
+                    splitLine: { distance: -30, length: 30, lineStyle: { color: '#fff', width: 4 } },
+                    axisLabel: { color: 'auto', distance: 40, fontSize: 14 },
+                    detail: { fontSize: 24, formatter: '{value}分' },
+                    data: [{ value: score, name: 'GEO分数' }]
+                }]
+            };
+            overallGeoChart.setOption(option);
+        }
+        
+        function updateTouchpointStatus(touchpoints) {
+            const container = document.getElementById('touchpointStatus');
+            container.innerHTML = '';
+            
+            const touchpointNames = {
+                'ai_search': 'AI搜索流量',
+                'social_content': '社交内容流量',
+                'ecommerce_ai': '电商AI导购',
+                'private_domain': '私域AI客服'
+            };
+            
+            Object.entries(touchpoints).forEach(([key, data]) => {
+                const status = data.geo_score >= 70 ? 'active' : (data.geo_score >= 50 ? 'warning' : 'critical');
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'metric-item';
+                statusDiv.innerHTML = `
+                    <div class="metric-value">
+                        <span class="status-indicator status-${status}"></span>
+                        ${data.geo_score.toFixed(1)}分
+                    </div>
+                    <div class="metric-label">${touchpointNames[key]}</div>
+                `;
+                container.appendChild(statusDiv);
+            });
+        }
+        
+        function updateCitationRateChart(touchpoints) {
+            const data = Object.entries(touchpoints).map(([key, data]) => ({
+                name: key,
+                value: data.ai_citation_rate
+            }));
+            
+            const option = {
+                tooltip: { trigger: 'item' },
+                legend: { bottom: '5%' },
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    data: data,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }]
+            };
+            citationRateChart.setOption(option);
+        }
+        
+        function updateSystemAlerts(touchpoints) {
+            const container = document.getElementById('systemAlerts');
+            container.innerHTML = '';
+            
+            Object.values(touchpoints).forEach(data => {
+                data.alerts.forEach(alert => {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = `alert alert-${alert.level}`;
+                    alertDiv.innerHTML = `
+                        <strong>${alert.title}</strong><br>
+                        ${alert.message}
+                    `;
+                    container.appendChild(alertDiv);
+                });
+            });
+            
+            if (container.children.length === 0) {
+                container.innerHTML = '<div class="alert">✅ 系统运行正常，暂无警报</div>';
+            }
+        }
+        
+        // 初始化加载数据
+        fetch('/api/dashboard')
+            .then(response => response.json())
+            .then(data => updateDashboard(data))
+            .catch(error => console.error('Error loading dashboard data:', error));
+    </script>
+</body>
+</html>
+    

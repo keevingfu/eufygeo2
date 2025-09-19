@@ -1,0 +1,32 @@
+{
+  "analysisDate": "2025-09-16T05:21:43.062Z",
+  "summary": {
+    "arlo": {
+      "aiOverviewAppearanceRate": "0%",
+      "contentStrengths": [
+        "Well-structured headings",
+        "Step-by-step instructions",
+        "FAQ sections",
+        "Bullet point lists"
+      ]
+    },
+    "ring": {
+      "aiOverviewAppearanceRate": "0%",
+      "contentStrengths": [
+        "Well-structured headings",
+        "Step-by-step instructions",
+        "Bullet point lists",
+        "FAQ sections"
+      ]
+    }
+  },
+  "recommendations": [
+    "Implement structured content with clear headings (H1, H2, H3)",
+    "Add \"Quick Answer\" sections at the beginning of guides",
+    "Create step-by-step installation guides with numbered steps",
+    "Include comprehensive FAQ sections on all product pages",
+    "Develop comparison content highlighting Eufy advantages",
+    "Focus on local storage and privacy benefits (unique differentiator)",
+    "Create buying guides optimized for AI Overview extraction"
+  ]
+}

@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: eufy-geo-postgres
+    environment:
+      POSTGRES_DB: eufy_geo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - eufy-geo-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: eufy-geo-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - eufy-geo-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: eufy-geo-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@eufy.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - eufy-geo-network
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: eufy-geo-redis-commander
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - eufy-geo-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  eufy-geo-network:
+    driver: bridge

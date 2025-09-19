@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eufy GEO Platform - Analytics Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .portal-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left Navigation */
+        .nav-sidebar {
+            width: 280px;
+            background: #1e2936;
+            color: white;
+            overflow-y: auto;
+            flex-shrink: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-header {
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-header h1 {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .nav-header p {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .nav-section {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-section-title {
+            padding: 0 20px;
+            margin-bottom: 10px;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.95em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: white;
+            padding-left: 25px;
+        }
+
+        .nav-item.active {
+            background: rgba(52,152,219,0.2);
+            color: #3498db;
+            border-left: 3px solid #3498db;
+        }
+
+        .nav-item.active:hover {
+            background: rgba(52,152,219,0.3);
+        }
+
+        .nav-item-icon {
+            display: inline-block;
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
+        }
+
+        .nav-item-badge {
+            float: right;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.75em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        /* Right Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .content-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .action-btn.primary {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .action-btn.primary:hover {
+            background: #2980b9;
+        }
+
+        .content-frame {
+            flex: 1;
+            background: #f5f7fa;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .welcome-screen h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .welcome-screen p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-sidebar {
+                width: 240px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portal-container {
+                flex-direction: column;
+            }
+            
+            .nav-sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-container">
+        <!-- Left Navigation -->
+        <nav class="nav-sidebar">
+            <div class="nav-header">
+                <h1>Eufy GEO Platform</h1>
+                <p>Analytics & Intelligence Portal</p>
+            </div>
+
+            <!-- SEO Analytics Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">SEO Analytics</div>
+                <a class="nav-item" onclick="loadPage('eufy-seo-dashboard.html', 'SEO Strategy Dashboard')">
+                    <span class="nav-item-icon">📊</span>
+                    SEO Strategy Overview
+                </a>
+                <a class="nav-item" onclick="loadPage('neo4j-seo-dashboard.html', 'Neo4j Graph Intelligence')">
+                    <span class="nav-item-icon">🔗</span>
+                    Graph Intelligence
+                </a>
+                <a class="nav-item" onclick="loadPage('eufy-seo-battle-dashboard.html', 'SEO Three Major Battles')">
+                    <span class="nav-item-icon">⚔️</span>
+                    Three Major Battles
+                    <span class="nav-item-badge">HOT</span>
+                </a>
+            </div>
+
+            <!-- GEO Strategy Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">GEO Strategy</div>
+                <a class="nav-item" onclick="loadPage('eufy-geo-strategy-dashboard.html', 'GEO Strategy Dashboard')">
+                    <span class="nav-item-icon">🎯</span>
+                    4000 Keywords Analysis
+                    <span class="nav-item-badge">NEW</span>
+                </a>
+                <a class="nav-item" onclick="loadPage('eufy-vs-arlo-vs-ring-comparison.html', 'Eufy vs Competitors')">
+                    <span class="nav-item-icon">⚔️</span>
+                    Eufy vs Arlo vs Ring
+                    <span class="nav-item-badge">HOT</span>
+                </a>
+                <a class="nav-item" onclick="loadPage('eufy-geo-content-strategy.html', 'GEO Content Strategy')">
+                    <span class="nav-item-icon">📝</span>
+                    Content Strategy
+                </a>
+                <a class="nav-item" onclick="loadPage('eufy-prompts-dashboard.html', 'Prompts Analytics')">
+                    <span class="nav-item-icon">💡</span>
+                    Prompts Analytics
+                </a>
+            </div>
+
+            <!-- Social Media Section -->
+            <div class="nav-section">
+                <div class="nav-section-title">Social Media Intelligence</div>
+                <a class="nav-item" onclick="loadPage('reddit-ai-content-dashboard.html', 'Reddit AI Strategy')">
+                    <span class="nav-item-icon">🤖</span>
+                    Reddit AI Strategy
+                </a>
+                <a class="nav-item" onclick="loadPage('eufy-reddit-strategy-dashboard.html', 'Reddit Content Strategy')">
+                    <span class="nav-item-icon">💬</span>
+                    Reddit Content Plan
+                </a>
+            </div>
+
+            <!-- Tools & Utilities -->
+            <div class="nav-section">
+                <div class="nav-section-title">Tools & Utilities</div>
+                <a class="nav-item" onclick="openExternal('http://localhost:7474')">
+                    <span class="nav-item-icon">🗄️</span>
+                    Neo4j Browser
+                </a>
+                <a class="nav-item" onclick="openExternal('http://localhost:5001')">
+                    <span class="nav-item-icon">🔌</span>
+                    API Explorer
+                </a>
+                <a class="nav-item" onclick="showDocs()">
+                    <span class="nav-item-icon">📚</span>
+                    Documentation
+                </a>
+            </div>
+
+            <!-- Content Optimization -->
+            <div class="nav-section">
+                <div class="nav-section-title">Content Optimization</div>
+                <a class="nav-item" onclick="showContentTemplates()">
+                    <span class="nav-item-icon">📋</span>
+                    GEO Templates
+                    <span class="nav-item-badge">NEW</span>
+                </a>
+                <a class="nav-item" onclick="runContentAudit()">
+                    <span class="nav-item-icon">🔍</span>
+                    Content Audit Tool
+                </a>
+                <a class="nav-item" onclick="showOptimizationEngine()">
+                    <span class="nav-item-icon">⚙️</span>
+                    Optimization Engine
+                </a>
+                <a class="nav-item" onclick="showTop10Articles()">
+                    <span class="nav-item-icon">📈</span>
+                    Top 10 Articles
+                    <span class="nav-item-badge">OPT</span>
+                </a>
+            </div>
+            
+            <!-- Advanced Features -->
+            <div class="nav-section">
+                <div class="nav-section-title">Advanced Features</div>
+                <a class="nav-item" onclick="showBMADAnalysis()">
+                    <span class="nav-item-icon">🏗️</span>
+                    BMAD Analysis
+                </a>
+                <a class="nav-item" onclick="showMonitoring()">
+                    <span class="nav-item-icon">📡</span>
+                    Monitoring System
+                </a>
+                <a class="nav-item" onclick="showABTesting()">
+                    <span class="nav-item-icon">🧪</span>
+                    A/B Testing Framework
+                </a>
+            </div>
+        </nav>
+
+        <!-- Right Content Area -->
+        <div class="content-area">
+            <div class="content-header">
+                <h2 class="content-title" id="contentTitle">Welcome to Eufy GEO Platform</h2>
+                <div class="content-actions">
+                    <button class="action-btn" onclick="refreshFrame()">
+                        <span>🔄</span> Refresh
+                    </button>
+                    <button class="action-btn" onclick="openInNewTab()">
+                        <span>🔗</span> Open in New Tab
+                    </button>
+                    <button class="action-btn primary" onclick="toggleFullscreen()">
+                        <span>⛶</span> Fullscreen
+                    </button>
+                </div>
+            </div>
+            
+            <div class="content-frame">
+                <!-- Loading Screen -->
+                <div class="loading-screen" id="loadingScreen">
+                    <div class="loader"></div>
+                </div>
+                
+                <!-- Welcome Screen -->
+                <div class="welcome-screen" id="welcomeScreen">
+                    <h2>Welcome to Eufy GEO Platform</h2>
+                    <p>Your comprehensive AI-powered content marketing and SEO analytics platform. Select a dashboard from the left navigation to get started.</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">850+</div>
+                            <div class="stat-label">Keywords Tracked</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">45.7</div>
+                            <div class="stat-label">GEO Score</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">49</div>
+                            <div class="stat-label">Subreddits</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">10</div>
+                            <div class="stat-label">Dashboards</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- IFrame Container -->
+                <div class="iframe-container" id="iframeContainer" style="display: none;">
+                    <iframe id="contentFrame" src="" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = '';
+        
+        // Load page in iframe
+        function loadPage(url, title) {
+            // Update UI
+            document.getElementById('contentTitle').textContent = title;
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('loadingScreen').style.display = 'flex';
+            document.getElementById('iframeContainer').style.display = 'none';
+            
+            // Update active navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Store current page
+            currentPage = url;
+            
+            // Load iframe
+            const iframe = document.getElementById('contentFrame');
+            iframe.onload = function() {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('iframeContainer').style.display = 'block';
+            };
+            iframe.src = url;
+        }
+        
+        // Refresh current frame
+        function refreshFrame() {
+            if (currentPage) {
+                const iframe = document.getElementById('contentFrame');
+                iframe.src = iframe.src;
+            }
+        }
+        
+        // Open current page in new tab
+        function openInNewTab() {
+            if (currentPage) {
+                window.open(currentPage, '_blank');
+            }
+        }
+        
+        // Open external link
+        function openExternal(url) {
+            window.open(url, '_blank');
+        }
+        
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            const elem = document.getElementById('iframeContainer');
+            if (!document.fullscreenElement) {
+                elem.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // Show documentation
+        function showDocs() {
+            alert('Documentation coming soon! Check CLAUDE.md and README.md for current docs.');
+        }
+        
+        // Show content templates
+        function showContentTemplates() {
+            loadPage('GEO_CONTENT_OPTIMIZATION_TEMPLATES.md', 'GEO Content Templates');
+        }
+        
+        // Run content audit tool
+        function runContentAudit() {
+            alert('Content Audit Tool\n\nTo run the content audit:\n1. Open terminal\n2. Run: python3 eufy_content_audit.py\n3. View results in generated CSV and JSON files\n\nThis tool analyzes Eufy content for GEO optimization opportunities.');
+        }
+        
+        // Show optimization engine
+        function showOptimizationEngine() {
+            alert('Content Optimization Engine\n\nTo use the optimization engine:\n1. Open terminal\n2. Run: python3 content_optimization_engine.py\n3. Analyze URLs for GEO score and recommendations\n\nAutomatically scores content and provides specific optimization suggestions.');
+        }
+        
+        // Show top 10 articles for optimization
+        function showTop10Articles() {
+            loadPage('top-10-articles-optimization.html', 'Top 10 Articles Optimization');
+        }
+        
+        // Show BMAD Analysis
+        function showBMADAnalysis() {
+            loadPage('bmad-analysis.html', 'BMAD Method Analysis');
+        }
+        
+        // Show Monitoring System
+        function showMonitoring() {
+            loadPage('monitoring-dashboard.html', 'Real-time Monitoring System');
+        }
+        
+        // Show A/B Testing Framework
+        function showABTesting() {
+            loadPage('ab-testing-framework.html', 'A/B Testing Framework');
+        }
+        
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + R to refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshFrame();
+            }
+            
+            // Ctrl/Cmd + F for fullscreen
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+        
+        // Save last viewed page
+        window.addEventListener('beforeunload', function() {
+            if (currentPage) {
+                localStorage.setItem('lastViewedPage', currentPage);
+                localStorage.setItem('lastViewedTitle', document.getElementById('contentTitle').textContent);
+            }
+        });
+        
+        // Load last viewed page on startup
+        window.addEventListener('load', function() {
+            const lastPage = localStorage.getItem('lastViewedPage');
+            const lastTitle = localStorage.getItem('lastViewedTitle');
+            if (lastPage && lastTitle) {
+                // Find and click the corresponding nav item
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(lastPage)) {
+                        item.click();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

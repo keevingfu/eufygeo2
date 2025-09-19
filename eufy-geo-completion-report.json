@@ -1,0 +1,167 @@
+{
+  "timestamp": "2025-09-17T20:35:20.103436",
+  "test_summary": {
+    "total_tests": 26,
+    "passed": 18,
+    "failed": 8,
+    "warnings": 0
+  },
+  "detailed_results": [
+    {
+      "test_name": "Portal Navigation Test",
+      "status": "FAIL",
+      "message": "Portal navigation test failed: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/index.html\nCall log:\n  - navigating to \"http://localhost:8080/index.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:23.841740"
+    },
+    {
+      "test_name": "Main SEO Dashboard",
+      "status": "FAIL",
+      "message": "Dashboard test failed: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/eufy-seo-dashboard.html\nCall log:\n  - navigating to \"http://localhost:8080/eufy-seo-dashboard.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:25.237824"
+    },
+    {
+      "test_name": "SEO Battle Dashboard",
+      "status": "FAIL",
+      "message": "Dashboard test failed: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/eufy-seo-battle-dashboard.html\nCall log:\n  - navigating to \"http://localhost:8080/eufy-seo-battle-dashboard.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:26.445480"
+    },
+    {
+      "test_name": "Neo4j SEO Dashboard",
+      "status": "FAIL",
+      "message": "Dashboard test failed: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/neo4j-seo-dashboard.html\nCall log:\n  - navigating to \"http://localhost:8080/neo4j-seo-dashboard.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:27.838083"
+    },
+    {
+      "test_name": "GEO Content Strategy",
+      "status": "FAIL",
+      "message": "GEO content strategy test failed: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/eufy-geo-content-strategy.html\nCall log:\n  - navigating to \"http://localhost:8080/eufy-geo-content-strategy.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:28.989219"
+    },
+    {
+      "test_name": "Comparison Functionality",
+      "status": "FAIL",
+      "message": "Comparison functionality test failed: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/eufy-vs-arlo-vs-ring-comparison.html\nCall log:\n  - navigating to \"http://localhost:8080/eufy-vs-arlo-vs-ring-comparison.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:30.399566"
+    },
+    {
+      "test_name": "Neo4j Integration - neo4j_dashboard_server.py",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:30.417835"
+    },
+    {
+      "test_name": "Neo4j Integration - import_competitor_data_to_neo4j.py",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:30.417875"
+    },
+    {
+      "test_name": "Neo4j Integration - neo4j_cypher_queries.cypher",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:30.417894"
+    },
+    {
+      "test_name": "Neo4j Integration - setup_neo4j.sh",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:30.417909"
+    },
+    {
+      "test_name": "Neo4j Integration - Docker Config",
+      "status": "PASS",
+      "message": "Neo4j configuration found in docker-compose.yml",
+      "timestamp": "2025-09-17T20:35:30.419123"
+    },
+    {
+      "test_name": "Content Optimization - content_optimization_engine.py",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:30.419181"
+    },
+    {
+      "test_name": "Content Optimization - GEO_CONTENT_OPTIMIZATION_TEMPLATES.md",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:30.419195"
+    },
+    {
+      "test_name": "Content Optimization - eufy_content_audit.py",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:30.419206"
+    },
+    {
+      "test_name": "Content Optimization - eufy-prompts-dashboard.html",
+      "status": "FAIL",
+      "message": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/eufy-prompts-dashboard.html\nCall log:\n  - navigating to \"http://localhost:8080/eufy-prompts-dashboard.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:31.617370"
+    },
+    {
+      "test_name": "Content Optimization - reddit-ai-content-dashboard.html",
+      "status": "FAIL",
+      "message": "Error: Page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:8080/reddit-ai-content-dashboard.html\nCall log:\n  - navigating to \"http://localhost:8080/reddit-ai-content-dashboard.html\", waiting until \"load\"\n",
+      "timestamp": "2025-09-17T20:35:33.013603"
+    },
+    {
+      "test_name": "File Structure Validation - Context-Engineering-Intro/",
+      "status": "PASS",
+      "message": "Directory found",
+      "timestamp": "2025-09-17T20:35:33.031697"
+    },
+    {
+      "test_name": "File Structure Validation - tests/",
+      "status": "PASS",
+      "message": "Directory found",
+      "timestamp": "2025-09-17T20:35:33.031813"
+    },
+    {
+      "test_name": "File Structure Validation - src/",
+      "status": "PASS",
+      "message": "Directory found",
+      "timestamp": "2025-09-17T20:35:33.031834"
+    },
+    {
+      "test_name": "File Structure Validation - docs/",
+      "status": "PASS",
+      "message": "Directory found",
+      "timestamp": "2025-09-17T20:35:33.031849"
+    },
+    {
+      "test_name": "File Structure Validation - db/",
+      "status": "PASS",
+      "message": "Directory found",
+      "timestamp": "2025-09-17T20:35:33.031861"
+    },
+    {
+      "test_name": "File Structure Validation - package.json",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:33.031872"
+    },
+    {
+      "test_name": "File Structure Validation - requirements.txt",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:33.031896"
+    },
+    {
+      "test_name": "File Structure Validation - CLAUDE.md",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:33.031907"
+    },
+    {
+      "test_name": "File Structure Validation - README.md",
+      "status": "PASS",
+      "message": "File found",
+      "timestamp": "2025-09-17T20:35:33.031917"
+    },
+    {
+      "test_name": "File Structure Validation - Context Engineering",
+      "status": "PASS",
+      "message": "Found 106 Context Engineering documentation files",
+      "timestamp": "2025-09-17T20:35:33.037053"
+    }
+  ]
+}
