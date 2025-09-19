@@ -47,15 +47,44 @@ EufyGeo2是一个基于Generative Engine Optimization (GEO)理念的综合AI内�
 ### 1. 环境准备
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/keevingfu/eufygeo2.git
 cd eufygeo2
 
-# 一键安装依赖
-./setup.sh
+# 配置环境变量
+cp .env.example .env
+# 编辑 .env 文件配置您的设置
 
-# 或手动安装
+# 安装Node.js依赖
+npm install
+
+# 或一键安装Python依赖
+./setup.sh
 pip install -r requirements.txt
 playwright install
+```
+
+### CI/CD自动化工作流 🔄
+
+本项目现已集成GitHub Actions自动化工作流：
+
+#### 可用的NPM脚本：
+- `npm run dev` - 启动开发服务器
+- `npm run build` - 构建生产版本
+- `npm test` - 运行所有测试
+- `npm run lint` - 代码检查和修复
+- `npm run sync` - 自动同步代码到GitHub
+- `npm run workflow` - 开发工作流助手
+
+#### 自动同步到GitHub：
+```bash
+# 快速同步（自动生成提交信息）
+npm run sync
+
+# 自定义提交信息同步
+npm run sync "feat: 添加新的GEO优化功能"
+
+# 使用工作流脚本
+npm run workflow sync "您的提交信息"
 ```
 
 ### 2. 启动服务
@@ -110,12 +139,42 @@ ls test_report_*.txt
 
 ## 🛠 技术栈
 
-- **后端**: Python 3.8+, Flask, FastAPI
-- **数据库**: Neo4j, SQLite, Redis
+- **后端**: Python 3.8+, Flask, FastAPI, Node.js, TypeScript
+- **数据库**: Neo4j, SQLite, Redis, PostgreSQL
 - **前端**: HTML5, JavaScript, ECharts
 - **AI/ML**: Transformers, OpenCV, scikit-learn
-- **测试**: Playwright
+- **测试**: Playwright, Jest
 - **部署**: Docker, Docker Compose
+- **CI/CD**: GitHub Actions, 自动化测试和部署
+
+## 🔄 CI/CD Pipeline
+
+GitHub Actions自动化流水线包括：
+
+- ✅ **代码质量检查**: ESLint, TypeScript类型检查
+- 🧪 **自动化测试**: 单元测试, E2E测试 (Playwright)
+- 🛡️ **安全扫描**: 依赖漏洞检查, CodeQL代码分析
+- 🏗️ **构建打包**: TypeScript编译, Docker镜像构建
+- 🚀 **自动部署**: 分阶段部署到测试和生产环境
+- 📦 **容器化**: 多阶段Docker构建优化
+
+### 触发条件：
+- **推送到 `main`**: 完整流水线 + 生产部署
+- **推送到 `develop`**: 完整流水线 + 测试环境部署  
+- **Pull Request**: 测试、安全和构建验证
+- **Dependabot**: 补丁更新自动合并
+
+### Docker支持：
+```bash
+# 构建Docker镜像
+npm run docker:build
+
+# 运行容器
+npm run docker:run
+
+# 或使用工作流脚本
+npm run workflow docker
+```
 
 ## 📈 性能指标
 

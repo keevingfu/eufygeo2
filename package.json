@@ -19,7 +19,12 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "typecheck": "tsc --noEmit",
     "analyze:geo": "ts-node tests/geo-visibility/run-geo-analysis.ts",
-    "report": "playwright show-report"
+    "report": "playwright show-report",
+    "sync": "./scripts/auto-sync.sh",
+    "workflow": "./scripts/dev-workflow.sh",
+    "ci": "npm run lint && npm run typecheck && npm test",
+    "docker:build": "docker build -t eufygeo2:latest .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env eufygeo2:latest"
   },
   "keywords": ["seo", "geo", "ai", "marketing", "eufy"],
   "author": "",
